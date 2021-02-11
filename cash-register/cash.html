@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="/cash-register/styles.css" rel="stylesheet" />
+</head>
+
+<body>
+
+    <header>
+        <h1>CASH COUNTER</h1>
+    </header>
+
+    <p >Enter the Bill Amount : <input type="number" id="bill"> Rs. </p>
+    <p >Enter the Cash Paid : <input type="number" id="cash"> Rs. </p>
+    <p ><button> Calculate </button> </p>
+    <br>
+    <div id="payback"></div>
+    <br>
+
+    <script>
+        let bill = document.querySelector("#bill");
+        let cash = document.querySelector("#cash");
+        let returnCash = document.querySelector("button")
+        let payback = document.querySelector("#payback")
+
+        function returnChange() {
+
+            if(!cash.value){console.log(true)}
+
+            payback.textContent ="";
+
+            let cashReturn = cash.value - bill.value;
+            let cashList = [1, 5, 10, 20, 100, 500, 2000];
+            console.log(cashReturn)
+
+            if(!cash.value || !bill.value){
+                payback.textContent = (!bill.value)? "Please enter the Bill Amount" : "Please enter the Cash Paid"
+            }
+
+            else if (cashReturn > 0) {
+
+                payback.textContent = "Please return the Cash Rs. " + cashReturn + " in below denomination";
+
+                let returnTable = document.createElement("table");
+                let row = document.createElement("tr");
+                let noteCol = document.createElement("th");
+                noteCol.appendChild(document.createTextNode("Notes/Coins \t"));
+                row.appendChild(noteCol);
+
+                let numberCol = document.createElement("th");
+                numberCol.appendChild(document.createTextNode("Nos."));
+                row.appendChild(numberCol);
+
+                returnTable.appendChild(row);
+
+                document.body.appendChild(returnTable)
+
+                for (var i = cashList.length - 1; cashReturn > 0; i--) {
+                    let count = 0;
+                    while (cashReturn >= cashList[i]) {
+                        if (cashReturn - cashList[i] >= 0) {
+                            count++;
+                        }
+                        cashReturn -= cashList[i];
+                    }
+                    if (count > 0) {
+                        row = document.createElement("tr");
+                        noteCol = document.createElement("td");
+                        noteCol.appendChild(document.createTextNode(cashList[i]));
+                        row.appendChild(noteCol);
+
+                        numberCol = document.createElement("td");
+                        numberCol.appendChild(document.createTextNode("x "+count));
+                        row.appendChild(numberCol);
+
+                        returnTable.appendChild(row);
+                    }
+                }
+                returnCash.removeEventListener("click", returnChange);
+            }
+
+            else if(cashReturn < 0){
+                payback.textContent = "Amount paid is short by " + -cashReturn + " Rs. against the bill amount "+ bill.value + " Rs.";
+            }
+
+            else if(cashReturn == 0) {
+                payback.textContent = "Say Thanks for paying exact bill";
+                returnCash.removeEventListener("click", returnChange);
+            }
+
+            bill.value = "";
+            cash.value = "";
+            
+
+        }
+        
+        returnCash.addEventListener("click", returnChange);
+    </script>
+
+</body>
+
+</html>
